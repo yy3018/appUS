@@ -1,0 +1,30 @@
+---
+title: "cleaning"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r}
+# library import
+library(tidyverse)
+```
+
+```{r}
+# data import
+data <- read_delim("data.dat", "\t", escape_double = FALSE, trim_ws = TRUE)
+
+# 96 patients and remove comments column
+data <- data[1:96,] %>% select(-Comments)
+```
+
+```{r}
+# convert to CSV for SAS
+# This is the last step of this Rmd, Do Not Run til we finish cleaning
+write.csv(data,'appUS.csv')
+```
+
+
+
