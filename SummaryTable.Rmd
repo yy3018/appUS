@@ -1,0 +1,68 @@
+---
+title: "Summary table"
+author: "Xiaoyang Li"
+date: "2020/10/8"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(chron)
+library(qwraps2)
+options(qwraps2_markup = "markdown")
+```
+
+
+
+```{r}
+# Data import
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/appUS1.csv") 
+
+# Summary
+sum = list(
+  "Age" = 
+    list(
+      "mean (sd)" = ~  mean_sd(data$PatientAge),
+      "Range" = ~ paste(min(data$PatientAge),max(data$PatientAge), sep = "~")),
+  "Gender" = 
+    list(
+      "Female" = ~ qwraps2::n_perc(data$Gender == "Female"),
+      "Male" = ~ qwraps2::n_perc(data$Gender == "Male")),
+  "Height(Inch)" = 
+    list(
+      "mean (sd)" = ~  mean_sd(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]),
+      "Range" = ~ paste(min(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]),max(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]) , sep = "~")),
+  "Weight(Kg)" = 
+    list(
+      "mean (sd)" = ~  mean_sd((data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)])),
+      "Range" = ~ paste(min(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]),max(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]), sep = "~")),
+  "Department 1st" = 
+    list(
+      "POCUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == "POCUS"),
+      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == "RADUS")),
+  "Department 2nd" = 
+    list(
+      "POCUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == "POCUS"),
+      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == "RADUS")
+    ))
+
+summary_table(data, sum)
+
+
+site =   list(
+  "Site" = 
+    list(
+     "CHLA"   = ~ qwraps2::n_perc(data$SiteName == "CHLA"),
+     "CUMC"   = ~ qwraps2::n_perc(data$SiteName == "CUMC"),
+     "Denver"   = ~ qwraps2::n_perc(data$SiteName == "Denver"),  
+     "Hasbro"  = ~ qwraps2::n_perc(data$SiteName == "Hasbro"),
+     "Indiana U"  = ~ qwraps2::n_perc(data$SiteName == "Indiana U"),
+     "Minnesota"   = ~ qwraps2::n_perc(data$SiteName == "Minnesota"),   
+     "NBIMC"  = ~ qwraps2::n_perc(data$SiteName == "NBIMC"),
+     "Rady"   = ~ qwraps2::n_perc(data$SiteName == "Rady"),
+     "UC Davis" = ~ qwraps2::n_perc(data$SiteName == "UC Davis")))
+
+summary_table(data, site)
+```
+
+
