@@ -1,0 +1,54 @@
+---
+title: "Antibiotic effect"
+author: "Xiaoyang Li"
+date: "2020/10/8"
+output: html_document
+---
+```{r}
+library(tidyverse)
+
+data = read_delim("C:/Users/Xiaoyang Li/Desktop/data/data.dat", "\t", escape_double = FALSE, trim_ws = TRUE) 
+data = data[1:96,] %>% select(-Comments)
+
+data = data%>% 
+  mutate(
+    change = SeqentialStaging - InitialStaging,
+    anti = 0
+  ) %>% select(change,anti, AntibioticsgivencheckallthatapplySelectedChoice)
+
+data = na.omit(data)
+
+for (i in 1:76) {
+  if(data$AntibioticsgivencheckallthatapplySelectedChoice[i] == "None given"){
+  data$anti[i] = 0
+}else{
+  data$anti[i] = 1
+  }
+}
+
+ggplot(data, aes(x = factor(anti), y = change)) + geom_boxplot()
+
+x = data$change[data$anti == 0]
+y = data$change[data$anti == 1]
+
+wilcox.test(change ~ anti, data, alternative = "two.sided")
+
+
+
+```
+
+Confusion Matrix
+```{r}
+data_ = data %>% select(SeqentialStaging, SurgPathFindings)
+
+data_ = na.omit(data_)
+
+for (i in 1:76) {
+  if(data$AntibioticsgivencheckallthatapplySelectedChoice[i] == "None given"){
+  data$anti[i] = 0
+}else{
+  data$anti[i] = 1
+  }
+}
+```
+

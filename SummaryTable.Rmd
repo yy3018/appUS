@@ -63,6 +63,18 @@ site =   list(
      "UC Davis" = ~ qwraps2::n_perc(data$SiteName == "UC Davis")))
 
 summary_table(data, site)
+
 ```
 
-
+|                       |data (N = 96) |
+|:----------------------|:-------------|
+|**Site**               |&nbsp;&nbsp;  |
+|&nbsp;&nbsp; CHLA      |12 (12.50%)   |
+|&nbsp;&nbsp; CUMC      |23 (23.96%)   |
+|&nbsp;&nbsp; Denver    |2 (2.08%)     |
+|&nbsp;&nbsp; Hasbro    |8 (8.33%)     |
+|&nbsp;&nbsp; Indiana U |10 (10.42%)   |
+|&nbsp;&nbsp; Minnesota |6 (6.25%)     |
+|&nbsp;&nbsp; NBIMC     |14 (14.58%)   |
+|&nbsp;&nbsp; Rady      |5 (5.21%)     |
+|&nbsp;&nbsp; UC Davis  |16 (16.67%)   |

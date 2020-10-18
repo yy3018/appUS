@@ -404,17 +404,6 @@ sum = list(
     list(
       &quot;mean (sd)&quot; = ~  mean_sd((data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)])),
       &quot;Range&quot; = ~ paste(min(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]),max(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]), sep = &quot;~&quot;)),
-  &quot;Site&quot; = 
-    list(
-     &quot;CHLA&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;CHLA&quot;),
-     &quot;CUMC&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;CUMC&quot;),
-     &quot;Denver&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Denver&quot;),  
-     &quot;Hasbro&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;Hasbro&quot;),
-     &quot;Indiana U&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;Indiana U&quot;),
-     &quot;Minnesota&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Minnesota&quot;),   
-     &quot;NBIMC&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;NBIMC&quot;),
-     &quot;Rady&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Rady&quot;),
-     &quot;UC Davis&quot; = ~ qwraps2::n_perc(data$SiteName == &quot;UC Davis&quot;)),
   &quot;Department 1st&quot; = 
     list(
       &quot;POCUS&quot; = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == &quot;POCUS&quot;),
@@ -425,7 +414,7 @@ sum = list(
       &quot;RADUS&quot; = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == &quot;RADUS&quot;)
     ))
 
-qwraps2::summary_table(data, sum)</code></pre>
+summary_table(data, sum)</code></pre>
 <pre><code>## 
 ## 
 ## |                       |data (N = 96)        |
@@ -442,22 +431,90 @@ qwraps2::summary_table(data, sum)</code></pre>
 ## |**Weight(Kg)**         |&amp;nbsp;&amp;nbsp;         |
 ## |&amp;nbsp;&amp;nbsp; mean (sd) |48.69 &amp;plusmn; 24.95 |
 ## |&amp;nbsp;&amp;nbsp; Range     |12&amp;nbsp;&amp;nbsp;152.3  |
-## |**Site**               |&amp;nbsp;&amp;nbsp;         |
-## |&amp;nbsp;&amp;nbsp; CHLA      |12 (12.50%)          |
-## |&amp;nbsp;&amp;nbsp; CUMC      |23 (23.96%)          |
-## |&amp;nbsp;&amp;nbsp; Denver    |2 (2.08%)            |
-## |&amp;nbsp;&amp;nbsp; Hasbro    |8 (8.33%)            |
-## |&amp;nbsp;&amp;nbsp; Indiana U |10 (10.42%)          |
-## |&amp;nbsp;&amp;nbsp; Minnesota |6 (6.25%)            |
-## |&amp;nbsp;&amp;nbsp; NBIMC     |14 (14.58%)          |
-## |&amp;nbsp;&amp;nbsp; Rady      |5 (5.21%)            |
-## |&amp;nbsp;&amp;nbsp; UC Davis  |16 (16.67%)          |
 ## |**Department 1st**     |&amp;nbsp;&amp;nbsp;         |
 ## |&amp;nbsp;&amp;nbsp; POCUS     |28 (30.11%)          |
 ## |&amp;nbsp;&amp;nbsp; RADUS     |64 (68.82%)          |
 ## |**Department 2nd**     |&amp;nbsp;&amp;nbsp;         |
 ## |&amp;nbsp;&amp;nbsp; POCUS     |80 (89.89%)          |
 ## |&amp;nbsp;&amp;nbsp; RADUS     |8 (8.99%)            |</code></pre>
+<pre class="r"><code>site =   list(
+  &quot;Site&quot; = 
+    list(
+     &quot;CHLA&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;CHLA&quot;),
+     &quot;CUMC&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;CUMC&quot;),
+     &quot;Denver&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Denver&quot;),  
+     &quot;Hasbro&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;Hasbro&quot;),
+     &quot;Indiana U&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;Indiana U&quot;),
+     &quot;Minnesota&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Minnesota&quot;),   
+     &quot;NBIMC&quot;  = ~ qwraps2::n_perc(data$SiteName == &quot;NBIMC&quot;),
+     &quot;Rady&quot;   = ~ qwraps2::n_perc(data$SiteName == &quot;Rady&quot;),
+     &quot;UC Davis&quot; = ~ qwraps2::n_perc(data$SiteName == &quot;UC Davis&quot;)))
+
+summary_table(data, site)</code></pre>
+<pre><code>## 
+## 
+## |                       |data (N = 96) |
+## |:----------------------|:-------------|
+## |**Site**               |&amp;nbsp;&amp;nbsp;  |
+## |&amp;nbsp;&amp;nbsp; CHLA      |12 (12.50%)   |
+## |&amp;nbsp;&amp;nbsp; CUMC      |23 (23.96%)   |
+## |&amp;nbsp;&amp;nbsp; Denver    |2 (2.08%)     |
+## |&amp;nbsp;&amp;nbsp; Hasbro    |8 (8.33%)     |
+## |&amp;nbsp;&amp;nbsp; Indiana U |10 (10.42%)   |
+## |&amp;nbsp;&amp;nbsp; Minnesota |6 (6.25%)     |
+## |&amp;nbsp;&amp;nbsp; NBIMC     |14 (14.58%)   |
+## |&amp;nbsp;&amp;nbsp; Rady      |5 (5.21%)     |
+## |&amp;nbsp;&amp;nbsp; UC Davis  |16 (16.67%)   |</code></pre>
+<table>
+<thead>
+<tr class="header">
+<th align="left"></th>
+<th align="left">data (N = 96)</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td align="left"><strong>Site</strong></td>
+<td align="left">  </td>
+</tr>
+<tr class="even">
+<td align="left">   CHLA</td>
+<td align="left">12 (12.50%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   CUMC</td>
+<td align="left">23 (23.96%)</td>
+</tr>
+<tr class="even">
+<td align="left">   Denver</td>
+<td align="left">2 (2.08%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Hasbro</td>
+<td align="left">8 (8.33%)</td>
+</tr>
+<tr class="even">
+<td align="left">   Indiana U</td>
+<td align="left">10 (10.42%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Minnesota</td>
+<td align="left">6 (6.25%)</td>
+</tr>
+<tr class="even">
+<td align="left">   NBIMC</td>
+<td align="left">14 (14.58%)</td>
+</tr>
+<tr class="odd">
+<td align="left">   Rady</td>
+<td align="left">5 (5.21%)</td>
+</tr>
+<tr class="even">
+<td align="left">   UC Davis</td>
+<td align="left">16 (16.67%)</td>
+</tr>
+</tbody>
+</table>
 
 
 
