@@ -6,6 +6,8 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
+
+knitr::opts_chunk$set(echo = FALSE, warning = F,message = F)
 library(tidyverse)
 library(chron)
 library(qwraps2)
@@ -16,14 +18,19 @@ options(qwraps2_markup = "markdown")
 
 ```{r}
 # Data import
-data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/appUS1.csv") 
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/App/appUS1.csv") %>% 
+  mutate(PatientHeightandWeightHeightin =  ifelse(PatientHeightandWeightHeightin == 0 ,
+                                   NA,
+                                   PatientHeightandWeightHeightin))
+
+
 
 # Summary
 sum = list(
   "Age" = 
     list(
       "mean (sd)" = ~  mean_sd(data$PatientAge),
-      "Range" = ~ paste(min(data$PatientAge),max(data$PatientAge), sep = "~")),
+      "Range" = ~ paste(min(data$PatientAge),max(data$PatientAge), sep = "-")),
   "Gender" = 
     list(
       "Female" = ~ qwraps2::n_perc(data$Gender == "Female"),
@@ -31,19 +38,23 @@ sum = list(
   "Height(Inch)" = 
     list(
       "mean (sd)" = ~  mean_sd(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]),
-      "Range" = ~ paste(min(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]),max(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]) , sep = "~")),
+      "Range" = ~ paste(min(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]),max(data$PatientHeightandWeightHeightin[!is.na(data$PatientHeightandWeightHeightin)]) , sep = "-"),
+      "NA(%)" = ~paste0(round(sum(is.na(data$PatientHeightandWeightHeightin)) / 96 *100,3), "%")),
   "Weight(Kg)" = 
     list(
       "mean (sd)" = ~  mean_sd((data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)])),
-      "Range" = ~ paste(min(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]),max(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]), sep = "~")),
+      "Range" = ~ paste(min(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]),max(data$PatientHeightandWeightWeightkg[!is.na(data$PatientHeightandWeightWeightkg)]), sep = "-"),
+      "NA(%)" = ~paste0(round(sum(is.na(data$PatientHeightandWeightWeightkg)) / 96 *100,3), "%")),
   "Department 1st" = 
     list(
       "POCUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == "POCUS"),
-      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == "RADUS")),
+      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform)] == "RADUS"),
+      "NA(%)" = ~paste0(round(sum(is.na(data$Whichdepartmentperformedtheultrasoundforthisform)) / 96 *100,3), "%")),
   "Department 2nd" = 
     list(
       "POCUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == "POCUS"),
-      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == "RADUS")
+      "RADUS" = ~ qwraps2::n_perc(data$Whichdepartmentperformedtheultrasoundforthisform_A[!is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)] == "RADUS"),
+      "NA(%)" = ~paste0(round(sum(is.na(data$Whichdepartmentperformedtheultrasoundforthisform_A)) / 96 *100,3), "%")
     ))
 
 summary_table(data, sum)
@@ -65,6 +76,35 @@ site =   list(
 summary_table(data, site)
 
 ```
+
+
+
+
+|                       |data (N = 96)        |
+|:----------------------|:--------------------|
+|**Age**                |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; mean (sd) |10.99 &plusmn; 4.04  |
+|&nbsp;&nbsp; Range     |1.6-18               |
+|**Gender**             |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; Female    |31 (32.29%)          |
+|&nbsp;&nbsp; Male      |65 (67.71%)          |
+|**Height(Inch)**       |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; mean (sd) |63.02 &plusmn; 23.28 |
+|&nbsp;&nbsp; Range     |32-175               |
+|&nbsp;&nbsp; NA(%)     |25%                  |
+|**Weight(Kg)**         |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; mean (sd) |48.69 &plusmn; 24.95 |
+|&nbsp;&nbsp; Range     |12-152.3             |
+|&nbsp;&nbsp; NA(%)     |1.042%               |
+|**Department 1st**     |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; POCUS     |28 (30.11%)          |
+|&nbsp;&nbsp; RADUS     |64 (68.82%)          |
+|&nbsp;&nbsp; NA(%)     |3.125%               |
+|**Department 2nd**     |&nbsp;&nbsp;         |
+|&nbsp;&nbsp; POCUS     |80 (89.89%)          |
+|&nbsp;&nbsp; RADUS     |8 (8.99%)            |
+|&nbsp;&nbsp; NA(%)     |7.292%               |
+
 
 |                       |data (N = 96) |
 |:----------------------|:-------------|
