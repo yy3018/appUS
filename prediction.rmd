@@ -1,0 +1,122 @@
+---
+title: "Prediction"
+author: "Xiaoyang Li"
+date: "2020/11/5"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(MASS)
+library(caret)
+library(rpart)
+library(rpart.plot)
+```
+
+## Data clean
+```{r}
+
+# data import
+data = read_delim("data.dat", "\t", escape_double = FALSE, trim_ws = TRUE) 
+
+# 96 patients and remove comments column
+data = data[1:96,] %>% dplyr::select(SurgPathFindings,SeqentialStaging, Largestdiameterofappendixmeasuredanteriortoposteriorwithcompre_A, Maximalmuralthicknessdistancefromhyperechoicluminalinterfaceto_A,  Presenceoffecalith_A, Presenceofsurroundingfreefluid_A) %>% 
+  rename(Surg = SurgPathFindings,
+         US2 = SeqentialStaging,
+         Appdiam = Largestdiameterofappendixmeasuredanteriortoposteriorwithcompre_A,
+         Muralthick = Maximalmuralthicknessdistancefromhyperechoicluminalinterfaceto_A,
+         fecalith = Presenceoffecalith_A,
+         freefluid = Presenceofsurroundingfreefluid_A) %>% 
+  mutate(surg_bi = case_when(Surg >=3 ~ 1,
+                             Surg <3 ~ 0),
+         lossSM = case_when(US2 == 4 ~ "1",
+                            US2 != 4 ~ "0"),
+         Muralthick = as.numeric(Muralthick),
+         freefluid = case_when(freefluid == "Yes" ~"Yes;",
+                               freefluid != "Yes" ~ freefluid)
+         ) 
+
+data$fecalith[data$fecalith == "Missing"] = NA
+data$freefluid[data$freefluid == "Missing"] = NA
+
+data = data %>% dplyr::select(surg_bi, Appdiam, Muralthick, fecalith , freefluid , lossSM)
+data = drop_na(data) # 61
+str(data) 
+```
+
+1) loss of normal echogenic submucosal layer: In the dataset, loss of SM layer is captured by the ultrasound and is described as stage IV: Gangrenous.
+2) mural hyperemia: Maximum mural thickness 
+3) periappendiceal fluid: Presence of surrounding free fluid
+4) appendicolith: presence of fecalith
+5) appendix wall diameter: largest diameter of appendix
+
+
+## Logistic regression
+```{r}
+# choose model
+glm1 = glm(data = data, surg_bi ~ . , family=binomial(link='logit')) 
+summary(glm1)
+
+step = glm2 %>% stepAIC(trace = FALSE)
+glm2 = glm(data = data, surg_bi ~ Appdiam + fecalith + freefluid , family=binomial(link='logit')) 
+summary(glm2)
+
+data_ = data %>% mutate(
+  freefluidcom = case_when(freefluid == "Yes; complex" ~ "1",
+                           freefluid != "Yes; complex" ~ "0"),
+  freefluid_ = case_when(freefluid == "Yes; complex" ~ "1",
+                         freefluid == "Yes; simple" ~ "1",
+                         freefluid == "Yes;" ~ "1",
+                         freefluid == "No" ~ "0")
+)
+
+glm3 = glm(data = data_,surg_bi ~ Appdiam + Muralthick +  fecalith + freefluid_ + lossSM , family=binomial(link='logit')) 
+summary(glm3)
+step3 = glm3 %>% stepAIC(trace = FALSE)
+glm3_ = glm(formula = surg_bi ~ Appdiam + fecalith, family = binomial(link = "logit"), 
+    data = data_)
+summary(glm3_)
+
+
+
+glm4 = glm(data = data_, surg_bi ~ Appdiam + Muralthick +  fecalith + freefluidcom + lossSM, family=binomial(link='logit')) 
+summary(glm4)
+step4 = glm4 %>% stepAIC(trace = FALSE)
+glm4_ = glm(formula = surg_bi ~ Appdiam + fecalith + freefluidcom, family = binomial(link = "logit"), 
+    data = data_)
+summary(glm4_)
+
+
+# prediction
+
+glm = glm3_
+glm_prob = predict(glm, newdata = data_, type = "response")
+glm_pred = rep("0", 61)
+glm_pred[glm_prob >0.5] = "1"
+confusionMatrix(data = as.factor(glm_pred),
+                   reference = as.factor(data_$surg_bi), positive = "1")
+
+glm = glm4_
+glm_prob = predict(glm, newdata = data_, type = "response")
+glm_pred = rep("0", 61)
+glm_pred[glm_prob >0.5] = "1"
+confusionMatrix(data = as.factor(glm_pred),
+                   reference = as.factor(data_$surg_bi), positive = "1")
+```
+
+## Decision tree
+```{r}
+rpart1 = rpart(surg_bi ~ Appdiam + Muralthick +  fecalith + freefluid_ + lossSM,
+   method="class", data=data_)
+rpart2 = rpart(surg_bi ~ Appdiam + Muralthick +  fecalith + freefluidcom + lossSM,
+   method="class", data=data_)
+
+print(rpart1)
+print(rpart2)
+rpart.plot(rpart1)
+rpart.plot(rpart2)
+
+```
+
+

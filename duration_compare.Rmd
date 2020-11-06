@@ -1,0 +1,79 @@
+---
+title: "Duration"
+author: "Xiaoyang Li"
+date: "2020/10/22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library()
+```
+
+```{r}
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/App/appUS1.csv") %>% 
+  select(TimeToDoUS, TimeToDoUS2,Whichdepartmentperformedtheultrasoundforthisform, Whichdepartmentperformedtheultrasoundforthisform_A) %>% 
+  rename(time1 = TimeToDoUS, time2 = TimeToDoUS2, depar1 = Whichdepartmentperformedtheultrasoundforthisform, depar2 = Whichdepartmentperformedtheultrasoundforthisform_A)
+
+data1 = data %>% select(time1, depar1) %>% rename(time = time1, depar = depar1)
+data2 = data %>% select(time2, depar2) %>% rename(time = time2, depar = depar2)
+
+data = rbind(data1, data2)
+data = drop_na(data)
+
+ggplot(data, aes(x = depar, y = time, color = depar)) + 
+  geom_boxplot() +
+  xlab("Department") + ylab("Duration") + ggtitle("Duration difference for different departments")
+  
+  
+
+t.test(time ~ depar, data)
+t.test(time ~ depar, data[-which.max(data$time),])
+
+data[which.max(data$time),]
+```
+
+```{r}
+
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/App/appUS1.csv") %>% 
+  select(TimeToDoUS, TimeToDoUS2,Whichdepartmentperformedtheultrasoundforthisform, Whichdepartmentperformedtheultrasoundforthisform_A) %>% 
+  rename(time1 = TimeToDoUS, time2 = TimeToDoUS2, depar1 = Whichdepartmentperformedtheultrasoundforthisform, depar2 = Whichdepartmentperformedtheultrasoundforthisform_A) %>% 
+  filter(depar1!=depar2)
+
+data = drop_na(data)
+
+data1 = data %>% select(time1, depar1) %>% rename(time = time1, depar = depar1)
+data2 = data %>% select(time2, depar2) %>% rename(time = time2, depar = depar2)
+
+data = rbind(data1, data2)
+
+ggplot(data, aes(x = depar, y = time, color = depar)) + 
+  geom_boxplot() +
+  xlab("Department") + ylab("Duration") + ggtitle("Duration difference for different departments")
+
+
+test1 = t.test(time ~ depar, data)
+
+
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/App/appUS1.csv") %>% 
+  select(TimeToDoUS, TimeToDoUS2,Whichdepartmentperformedtheultrasoundforthisform, Whichdepartmentperformedtheultrasoundforthisform_A) %>% 
+  rename(time1 = TimeToDoUS, time2 = TimeToDoUS2, depar1 = Whichdepartmentperformedtheultrasoundforthisform, depar2 = Whichdepartmentperformedtheultrasoundforthisform_A) %>% 
+  filter(depar1!=depar2)
+
+data = drop_na(data)
+data = data[-which.max(data$time1),]
+
+data1 = data %>% select(time1, depar1) %>% rename(time = time1, depar = depar1)
+data2 = data %>% select(time2, depar2) %>% rename(time = time2, depar = depar2)
+
+data = rbind(data1, data2)
+
+ggplot(data, aes(x = depar, y = time, color = depar)) + 
+  geom_boxplot() +
+  xlab("Department") + ylab("Duration") + ggtitle("Duration difference for different departments")
+
+
+test2 = t.test(time ~ depar, data)
+```
+

@@ -1,0 +1,37 @@
+---
+title: "Receptivity"
+author: "Xiaoyang Li"
+date: "2020/10/22"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(ggstatsplot)
+
+library(patchwork)
+```
+
+```{r}
+data = read_csv("C:/Users/Xiaoyang Li/Desktop/data/App/appUS1.csv") %>% 
+  select(Whichdepartmentperformedtheultrasoundforthisform, Whichdepartmentperformedtheultrasoundforthisform_A, Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultraso, Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultra_A, Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultra_B) %>% 
+  rename(depar1 = Whichdepartmentperformedtheultrasoundforthisform, depar2 = Whichdepartmentperformedtheultrasoundforthisform_A, 
+         rate1 = Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultraso, 
+         rate2 = Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultra_A,
+         rate3 = Pleaseratehowmuchyouagreewiththefollowingstatementsfortheultra_B) %>% 
+  mutate(rate1 = ordered(rate1, levels = c("Strongly disagree", "Disagree", "Neither agree nor disagree", "Agree", "Strongly Agree")),
+         rate2 = ordered(rate2, levels = c("Strongly disagree", "Disagree", "Neither agree nor disagree", "Agree", "Strongly Agree")),
+         rate3 = ordered(rate3, levels = c("Strongly disagree", "Disagree", "Neither agree nor disagree", "Agree", "Strongly Agree")))
+
+data1 = data%>% 
+  filter(depar1 == "POCUS" | depar2 =="POCUS")
+
+data1 = data1[-c(11,13,15),]
+
+
+ggpiestats(data1, results.subtitle = FALSE, main = rate1) + 
+ggpiestats(data1, results.subtitle = FALSE, main = rate2) +
+ggpiestats(data1, results.subtitle = FALSE, main = rate3) 
+```
+
