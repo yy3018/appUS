@@ -30,12 +30,16 @@ data = data[1:96,] %>% dplyr::select(SurgPathFindings,SeqentialStaging, Largestd
          freefluid = Presenceofsurroundingfreefluid_A) %>% 
   mutate(surg_bi = case_when(Surg >=3 ~ 1,
                              Surg <3 ~ 0),
+         US2_ = case_when(US2 >=3 ~ 1,
+                         US2 <3 ~ 0),
          lossSM = case_when(US2 == 4 ~ "1",
                             US2 != 4 ~ "0"),
          Muralthick = as.numeric(Muralthick),
          freefluid = case_when(freefluid == "Yes" ~"Yes;",
                                freefluid != "Yes" ~ freefluid)
          ) 
+US = data %>% dplyr::select(US2_, surg_bi)
+US = drop_na(US)
 
 data$fecalith[data$fecalith == "Missing"] = NA
 data$freefluid[data$freefluid == "Missing"] = NA
@@ -103,6 +107,10 @@ glm_pred = rep("0", 61)
 glm_pred[glm_prob >0.5] = "1"
 confusionMatrix(data = as.factor(glm_pred),
                    reference = as.factor(data_$surg_bi), positive = "1")
+
+
+confusionMatrix(data = as.factor(US$US2_),
+                   reference = as.factor(US$surg_bi), positive = "1")
 ```
 
 ## Decision tree
